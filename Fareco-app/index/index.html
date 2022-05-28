@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fareco-app</title>
+    <link rel="stylesheet" href="fareco/styles/style.css" />
+    <script defer src="fareco/face-api.min.js"></script>
+    <script defer src="fareco/javascript/script.js"></script>
+  </head>
+  <body>
+    <div class="head-container">
+      <div id="focus-icons-container">
+        <div class="focus-icons"></div>
+        <div class="focus-icons"></div>
+        <div class="focus-icons"></div>
+      </div>
+    </div>
+    <div class="main">
+      <div id="video-container">
+        <div id="loading">
+          <p id="loading-description">Loading</p>
+          <img src="fareco/Face-images/Loading.gif" />
+           <h6>This may take some time</h6>
+        </div>
+        <video id="video" autoplay muted></video>
+        <div id="main-screen">
+          <p id="description">Frontal face scan</p>
+          <img id="main-img" src="fareco/Face-images/frontal.jpeg" alt="" />
+          <p>Click to start scan</p>
+        </div>
+        <div id="error-screen">
+          <h1>Unable to detect face</h1>
+          <p>Try staying close to camera.</p>
+          <p>Do not turn too much.</p>
+          <p>Try focusing on the green dot.</p>
+          Click to try again
+        </div>
+        <div id="emotion-screen">
+          <h1>Pick an emotion</h1>
+          <div class="emotion-cont">
+          <label><input type="radio" name="emotion"/><div class="emotion-card" id="happy">Happy</div></label>
+          <label><input type="radio" name="emotion"/><div class="emotion-card" id="surprised">Surprised</div></label>
+          <label><input type="radio" name="emotion"/><div class="emotion-card" id="angry">Angry</div></label>
+          </div> 
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <h1>Copyright &copy2022: Developed by @Aryan_Raj</h1>
+    </div>
+  </body>
+</html>

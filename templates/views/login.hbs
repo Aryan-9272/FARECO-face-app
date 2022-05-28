@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="static/styles/style.css">
+    <style>     
+    .login-ic a{
+    background-color: white;
+    color: black;
+    }
+    </style>
+</head>
+<body>
+
+    {{>header}}
+      <div class="reg-form-cont login-form-cont">
+        <form action="login" method="POST">
+            <div class="register-form-text"><h1>Login</h1></div>
+            <input type="text" name="username" class="input" placeholder="Enter Username" required>
+            <button>Proceed to face scan</button>
+        </form>
+
+    </div>
+    {{>footer}}
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+    const cross=document.getElementById("cross");
+    const ham=document.getElementById("ham");
+    const menu=document.getElementById("hamburg-menu");
+    ham.addEventListener("click",()=>{
+        menu.style.display="initial";
+        ham.style.display="none";
+        cross.style.display="initial";
+    });
+    cross.addEventListener("click",()=>{
+        menu.style.display="none";
+        ham.style.display="initial";
+        cross.style.display="none";
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="static/styles/style.css">
+    <style>
+        .nav-icons{
+            display: none;
+        }
+        .ham-cont{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    {{>header}}
+
+    <div class="user-info-cont">
+    <div class="user-box">
+    <ion-icon name="person-outline" class="user-icon"></ion-icon>
+    <div class="user-info">User</div>
+    <div class="user-content">
+    <div class="user-desc"><h1>Username</h1><h1 class="user-name">{{uname}}</h1></div>
+    <div class="user-desc"><h1>Levels</h1><h1 class="user-name">{{ulevel}}</h1></div>
+    <div class="user-desc"><h1>Expression</h1><h1 class="user-name">{{uexp}}</h1></div>
+    </div>
+    </div>
+    </div>
+
+    <div class="user-main-cont">
+        <div class="user-main">
+         {{mode}} Successful
+          <img src="static/images/successful.png" alt="">
+          <h1>Welcome to your dashboard <br>"{{uname}}"</h1>
+          <a href="/" class="go-to-home">Go to home page</a>  
+        </div>
+    </div>
+    {{>footer}}
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+</html>
