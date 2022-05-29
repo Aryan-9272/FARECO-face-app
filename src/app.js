@@ -19,7 +19,7 @@ const jwt=require("jsonwebtoken");              //Requiring jwt for cookies.
 /*<--------Initialising the most important constant variables------->*/
 const app=express();                                              //Creating the express server.
 const port=process.env.PORT || 3000;                              //Assigning port.
-const threshold=[0.33,0.31,0.31,0.35];                            //This part will be used at line 355. These are the threshold values for each stage for matching the faces. 
+const threshold=[0.33,0.35,0.35,0.35];                            //This part will be used at line 364. These are the threshold values for each stage for matching the faces. 
 const staticDir=path.join(__dirname,"../public");                 //Creating the path for serving static files {images/CSS} for templates.
 const viewPath=path.join(__dirname,"../templates/views");         //Creating the path for views which has all the main hbs templates.       
 const partialPath=path.join(__dirname,"../templates/partials");   //Creating the path for partial templates.
@@ -322,14 +322,18 @@ app.post('/login',async(req,res)=>{
 app.post('/matchData',async(req,res)=>{
     try{
         const user=await User.findOne({token:req.cookies.jwt});    //Check the cookies and find the user.
-        const label=user.faceDescriptors[user.currentStage-1].label;    //Find the label of the face descriptors depending on the current stage.
-        const descriptors=user.faceDescriptors[user.currentStage-1].descriptors;    //Get those descriptors from the database which is stored as an array of 50 elements of descriptor objects. Each object has 128 values corresponding to different parts of the face.  
+        let labelDescArr=[];                //Labeled descriptor array storing labeled descriptor.
+        
+        for(i=0;i<user.totalStages;i++){    //Making labeled Descriptor for each stage.
+        const label=user.faceDescriptors[i].label;    //Find the label of the face descriptors for each stage.
+        const descriptors=user.faceDescriptors[i].descriptors;    //Get those descriptors from the database which is stored as an array of 50 elements of descriptor objects. Each object has 128 values corresponding to different parts of the face.  
         const descriptorArray=descriptors.map(descObject=>{                         
             return new Float32Array(Object.values(descObject));             //Converting the object array to array of arrays.
         })
-
         const labeledDesript= new faceapi.LabeledFaceDescriptors(label,descriptorArray);    //Making a labeled face descriptor object from the above array of arrays.
-        const faceMatch=new faceapi.FaceMatcher(labeledDesript);        //Making a face matcher object which has the required method for computing mean euclidean distance.
+        labelDescArr.push(labeledDesript);  //Pushing these labeled descriptors on array.
+        }
+        const faceMatch=new faceapi.FaceMatcher(labelDescArr);        //Making a face matcher object which has the required method for computing mean euclidean distance and matching the head orientation.
         let recievedData=[];        //creating an array for storing the received data from the user.
         let  recievedDesc=[];       //Another array for converting the above array into array of arrays.
 
@@ -346,14 +350,20 @@ app.post('/matchData',async(req,res)=>{
         });
 
         let descMean=0;             //Initialisng the main comparison variable for the mean distance.
-        recievedDesc.forEach((desc)=>{      //For each recieved array element, calculate the mean euclidean distance with descriptor array made using the descriptors from the database.
-            descMean+=faceMatch.computeMeanDistance(desc,descriptorArray);  //add that mean euclidean distance for each array of array of arrays of received face descriptors.
+        let match;                  //Declaring the match comparison variable for matching the orientation.
+        let currLabel=user.faceDescriptors[user.currentStage-1].label;  //Getting the current label for current head orientation.
+        recievedDesc.forEach((desc)=>{      //For each recieved array element, calculate the mean euclidean distance with labeled descriptor array made using the descriptors from the database.
+            descMean+=faceMatch.computeMeanDistance(desc,labelDescArr[user.currentStage-1]._descriptors);  //add that mean euclidean distance for each array of array of arrays of received face descriptors.
+            match=faceMatch.findBestMatch(desc,labelDescArr);   //Also determine the head orientation by finding the best match out of all stages.
         })
         descMean=descMean/50;       //after adding all the distances, calculate the mean.
-        // console.log(descMean);   //Uncomment to see the mean distance, the lower the value the closer the face is to the original face stored during registration.
-
-        if(descMean<threshold[user.currentStage-1]){    //Compare this mean with threshold value defined at line 22 for each stage. For experimentation these threshold values can be changed. 
-         //The lower the threshold value, more strict will be the checking for the face and more accurate the result would be but the user must orient the face in the same way as it was during the registration procedure.
+        
+        // console.log(descMean,currLabel,match._label);   //Uncomment to see the mean distance, the current label and the matched label.
+        //the lower the value the closer the face is to the original face stored during registration.
+        
+        if(descMean<threshold[user.currentStage-1]&&currLabel==match._label){    //Compare this mean with threshold value defined at line 22 for each stage. For experimentation these threshold values can be changed. 
+        //Also compare if the user is looking in the instructed direction or not by finding the best match. 
+        //The lower the threshold value, more strict will be the checking for the face and more accurate the result would be but the user must orient the face in the same way as it was during the registration procedure.
             if(user.currentStage<4)         //Check if the user's current stage is less than 4 as only face descriptor mean will be compared.
                 user.currentStage++;        //if the stage is less than 4 and descriptor mean is less than threshold,increment the current descriptor.
             else{                           //else if the total stage=4 then.
