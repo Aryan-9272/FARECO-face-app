@@ -157,7 +157,9 @@ async function scanFace(){
         const detections= await faceapi.detectSingleFace(video, 
         tiny).withFaceLandmarks().withFaceDescriptor().withFaceExpressions();
       /*<-------------------The main function that scans the face and records descriptor.---------------->*/
-      
+        if(startScanTime==5){
+            alert("App is ready !!!\nBegin Scan");
+        }
         if(startScanTime>5){  //Start doing the below process after 0.5s have passed from the time of completion of loading.
 
         loadingScreen.style.display="none";   //Loading screen goes only after the above function has started the scan.
